@@ -68,6 +68,7 @@ export class ProxyService {
 
     public async getAllTeams(): Promise<TeamForMatchInterface[]> {
         try {
+
             return await this.teamsService.getAllTeams();
         } catch (e) {
             this.logger.error('Unable to get teams', e);
@@ -86,11 +87,11 @@ export class ProxyService {
         }
     }
 
-    public async getRatioForTeam(query: TeamRatioQueryDto): Promise<any> {
+    public async getRatioForTeam(query: TeamRatioQueryDto): Promise<TeamForMatchInterface> {
         try {
             const team: TeamForMatchInterface = await this.teamsService.findTeamByName(query.team);
 
-            return await this.matchesService.getTeamRatio(team);
+            return (await this.matchesService.getTeamRatio(team)).pop();
         } catch (e) {
             this.logger.error('Unable to retrieve team result', e);
             throw e;
@@ -101,6 +102,7 @@ export class ProxyService {
         try {
             if (query && Object.keys(query).length) {
                 const conditionArray: any[] = await ProxyService.buildQueryConditionForMatch(query, await this.resolveQueryValuesForMatch(query));
+
                 return await this.matchesService.findMatchResultsApi(conditionArray);
             } else {
                 return await this.matchesService.findMatchResultsApi();
@@ -130,7 +132,6 @@ export class ProxyService {
                 } else {
                     awayTeam.score = awayTeam.score + 3;
                 }
-
             })
             results.sort((a, b) => (a.score < b.score) ? 1 : -1)
 
@@ -171,6 +172,7 @@ export class ProxyService {
                 HTS: match.HTS,
             }
             if (homeTeam && awayTeam && date) {
+
                 return await this.matchesService.createMatch(data);
             } else {
                 if (homeTeam) {
@@ -202,6 +204,7 @@ export class ProxyService {
                 HTS: match.HTS,
             }
             if (homeTeam && awayTeam) {
+
                 return await this.matchesService.updateMatch(data);
             } else {
                 if (homeTeam) {
@@ -225,7 +228,7 @@ export class ProxyService {
             const homeTeam = await this.teamsService.findTeamByName(match.homeTeam);
             const awayTeam = await this.teamsService.findTeamByName(match.awayTeam);
             const date = moment(match.date, "DD/MM/YYYY").toDate();
-            const data: any = {
+            const data: MatchInterface = {
                 homeTeam: homeTeam._id,
                 awayTeam: awayTeam._id,
                 date: date,
@@ -237,8 +240,9 @@ export class ProxyService {
         }
     }
 
-    public async findTeams(query?: TeamsQueryDto): Promise<TeamForMatchInterface[]> {
+    public async findTeams(query: TeamsQueryDto): Promise<TeamForMatchInterface[]> {
         try {
+
             return query ? await this.teamsService.findTeamsAPI(query) : await this.teamsService.findTeamsAPI();
         } catch (e) {
             this.logger.error('Unable to retrieve teams', e);
@@ -248,6 +252,7 @@ export class ProxyService {
 
     public async createTeam(team: { name: string }): Promise<TeamCreatedInterface> {
         try {
+
             return await this.teamsService.createTeam(team);
         } catch (e) {
             this.logger.error(`Unable to create team`, e);
@@ -257,6 +262,7 @@ export class ProxyService {
 
     public async updateTeam(team: { oldName: string, newName: string }): Promise<TeamCreatedInterface> {
         try {
+
             return await this.teamsService.updateTeam(team);
         } catch (e) {
             this.logger.error(`Unable to update team`, e);
@@ -275,6 +281,7 @@ export class ProxyService {
         if (query.date) {
             date = moment(query.date, "DD-MM-YYYY").toDate();
         }
+
         return [teamOne, teamTwo, date]
     }
 
@@ -295,6 +302,7 @@ export class ProxyService {
                         awayTeam: teamOne._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.teamOne && query.teamTwo) {
@@ -309,6 +317,7 @@ export class ProxyService {
                         awayTeam: teamOne._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.teamOne && query.date) {
@@ -323,6 +332,7 @@ export class ProxyService {
                         awayTeam: teamOne._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.teamOne) {
@@ -335,6 +345,7 @@ export class ProxyService {
                         awayTeam: teamOne._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.teamTwo && query.date) {
@@ -349,6 +360,7 @@ export class ProxyService {
                         homeTeam: teamTwo._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.teamTwo) {
@@ -361,6 +373,7 @@ export class ProxyService {
                         homeTeam: teamTwo._id,
                     }];
             } else {
+
                 return [];
             }
         } else if (query.date) {
@@ -369,6 +382,7 @@ export class ProxyService {
                     date: date,
                 }];
         } else {
+
             return [];
         }
         return conditionArray;

@@ -1,4 +1,10 @@
-import { Controller, Get, HttpStatus, Response, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get, HttpCode,
+  HttpStatus,
+  Response,
+  UseInterceptors
+} from '@nestjs/common';
 import { RootService } from './root.service';
 import { MainAppInterceptor } from "../../interceptors/main.app.interceptor";
 import { TotalResultsInterface } from "../../interfaces/total.results.interface";
@@ -13,23 +19,19 @@ export class RootController {
 
   @Get()
   getRootPage(): string {
+
     return this.rootService.getRootPage();
   }
   @Get('/update-dataset')
-  public async updateDataset(
-      @Response() res: any
-  ) {
-    try{
+  @HttpCode(HttpStatus.OK)
+  public async updateDataset() {
       await this.rootService.updateDataset();
-      res.status(HttpStatus.OK).json('Update performed successfully');
-  } catch (e){
-      res.status(HttpStatus.BAD_REQUEST).send();
-    }
   }
 
   @Get('/total-results')
   @UseInterceptors(TotalResultsInterceptor)
   public async championshipResults(): Promise<TotalResultsInterface[]> {
-      return this.rootService.getTotalResults();
+
+    return this.rootService.getTotalResults();
   }
 }

@@ -14,11 +14,11 @@ export const transformTeams = (records: TeamForMatchInterface[]): TeamApiInterfa
        return []
     }
 }
-export const transformTeam = (record: TeamForMatchInterface): TeamApiInterface | any => {
+export const transformTeam = (record: TeamForMatchInterface): TeamApiInterface | null => {
     if (record) {
         return { name: record.name, updated: moment(record.updated).format("DD-MM-YYYY") }
     } else {
-        return {}
+        return null
     }
 }
 
@@ -37,7 +37,7 @@ export const transformMatches = (records: MatchDbInterface[]): MatchResultsApiIn
         return []
     }
 }
-export const transformMatch = (record: MatchDbInterface): MatchResultsApiInterface | any => {
+export const transformMatch = (record: MatchDbInterface): MatchResultsApiInterface | null => {
     if (record){
         return {
             date: moment(record.date).format("DD-MM-YYYY"),
@@ -48,7 +48,7 @@ export const transformMatch = (record: MatchDbInterface): MatchResultsApiInterfa
             ATS: record.ATS,
         }
     } else {
-        return {}
+        return null
 
     }
 }
@@ -61,6 +61,6 @@ export const transformTotalResult = (records: TotalResultsInterface[]): any => {
         ))
         return result
     } else {
-        return {}
+        return null
     }
 }

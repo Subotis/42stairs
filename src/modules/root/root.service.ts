@@ -33,6 +33,7 @@ export class RootService {
 
   public async getTotalResults(): Promise<TotalResultsInterface[]> {
     try{
+
       return this.proxyService.getTotalResults();
     } catch (e) {
       this.logger.error('Unable to update data', e);
@@ -43,6 +44,7 @@ export class RootService {
   private async getDataset(): Promise<DatasetRecordInterface[]> {
     try {
       const dataset = (await this.httpService.get('https://api.jsonbin.io/b/5ebb0cf58284f36af7ba1779/1').toPromise()).data;
+
       return dataset.map( record => ({
         AwayTeam: record.AwayTeam,
         HomeTeam: record.HomeTeam,

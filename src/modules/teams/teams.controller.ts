@@ -36,19 +36,22 @@ export class TeamsController {
     public async getTeams(
         @Query() query: TeamsQueryDto
     ): Promise<TeamForMatchInterface[]> {
-        return await this.proxyService.findTeams(query);
+
+        return this.proxyService.findTeams(query);
     }
     @Get('results')
     public async getResults(
         @Query() query: TeamResultsQueryDto
     ): Promise<TeamResultsInteface> {
-        return await this.proxyService.getResultsForTeam(query);
+
+        return this.proxyService.getResultsForTeam(query);
     }
     @Get('ratio')
     public async getRatio(
         @Query() query: TeamRatioQueryDto
-    ): Promise<TeamForMatchInterface[]> {
-        return await this.proxyService.getRatioForTeam(query);
+    ): Promise<TeamForMatchInterface> {
+
+        return this.proxyService.getRatioForTeam(query);
     }
 
     @Post('/create')
@@ -57,7 +60,8 @@ export class TeamsController {
     public async createTeam(
         @Body() body: CreateTeamDto,
     ): Promise<TeamCreatedInterface> {
-        return await this.proxyService.createTeam(body);
+
+        return this.proxyService.createTeam(body);
     }
 
     @Patch('/update')
@@ -66,7 +70,8 @@ export class TeamsController {
     public async updateTeam(
         @Body() body: UpdateTeamDto,
     ): Promise<TeamCreatedInterface> {
-        return await this.proxyService.updateTeam(body);
+
+        return this.proxyService.updateTeam(body);
     }
 
     @Delete('/delete')
@@ -74,6 +79,7 @@ export class TeamsController {
     public async deleteTeam(
         @Body() body: DeleteTeamDto,
     ): Promise<void> {
-        return await this.proxyService.deleteTeam(body);
+
+        return this.proxyService.deleteTeam(body);
     }
 }

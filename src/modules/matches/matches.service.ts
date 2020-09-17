@@ -20,6 +20,7 @@ export class MatchesService {
     constructor(
         @Inject(MyLogger) private readonly logger: MyLogger,
         @InjectModel(DbModelNames.MATCHES)
+
         public readonly matchesModel: Model<MatchInterface>
     ) {
     }
@@ -52,8 +53,10 @@ export class MatchesService {
     public async findMatchResultsApi(conditionArray?: any[]): Promise<MatchDbInterface[]>{
         try {
             if (conditionArray) {
+
                 return await this.matchesModel.find({$or: conditionArray}).populate('awayTeam', 'name').populate('homeTeam', 'name').exec();
             } else {
+
                 return await this.matchesModel.find().populate('awayTeam', 'name').populate('homeTeam', 'name').exec();
             }
         } catch (e) {
@@ -65,6 +68,7 @@ export class MatchesService {
     public async getTeamResults(team: TeamForMatchInterface|null): Promise<TeamResultsInteface>{
         try {
             if (team) {
+
                 return await this.matchesModel.aggregate([
                     {
                         $match: {
@@ -236,9 +240,10 @@ export class MatchesService {
         }
     }
 
-    public async getTeamRatio(team: TeamForMatchInterface|null): Promise<any>{
+    public async getTeamRatio(team: TeamForMatchInterface|null): Promise<TeamForMatchInterface[]>{
         try {
             if (team) {
+
                 return await this.matchesModel.aggregate([
                     {
                         $match: {
@@ -375,18 +380,17 @@ export class MatchesService {
         try {
             const matchExist: MatchDbInterface[] | null = await this.matchesModel.find(
                 {
-                    $or: [
-                        {
-                            date: match.date,
-                            homeTeam: match.homeTeam,
-                            awayTeam: match.awayTeam,
-                        },
-                        {
-                            date: match.date,
-                            homeTeam: match.awayTeam,
-                            awayTeam: match.homeTeam,
-                        }
-                    ]
+                    date: match.date,
+                    homeTeam: {
+                        $or: [
+                            match.homeTeam, match.awayTeam
+                        ]
+                    },
+                    awayTeam: {
+                        $or: [
+                            match.homeTeam, match.awayTeam
+                        ]
+                    }
                 }
             );
             if (matchExist.length) {
@@ -394,6 +398,7 @@ export class MatchesService {
                     `Only one match for ${moment(match.date).format("DD-MM-YYYY")} date between ${match.homeTeam.name} and ${match.awayTeam.name} allowed`
                 );
             }
+
             return await this.matchesModel.create(match);
         } catch (e) {
             this.logger.error('Unable create match', e);
@@ -405,7 +410,7 @@ export class MatchesService {
         try{
             let fieldsForUpdate: any = {};
             if (match.date){
-                fieldsForUpdate['date'] = match.date;
+                fieldsForUpdate.date = match.date;
                 const exitingMatchInDate: MatchDbInterface[] = await this.matchesModel.find(
                     {
                         homeTeam: match.homeTeam._id,
@@ -419,10 +424,10 @@ export class MatchesService {
                 }
             }
             if (match.HTS) {
-                fieldsForUpdate['HTS'] = match.HTS;
+                fieldsForUpdate.HTS = match.HTS;
             }
             if (match.ATS) {
-                fieldsForUpdate['ATS'] = match.ATS;
+                fieldsForUpdate.ATS = match.ATS;
             }
             const updatedMatch = await this.matchesModel.findOneAndUpdate(
                 {
@@ -437,6 +442,7 @@ export class MatchesService {
                 }
             ).populate('awayTeam', 'name').populate('homeTeam', 'name').exec();
             if (updatedMatch){
+
                 return updatedMatch;
             } else {
                 throw new BadRequestException(
@@ -448,7 +454,7 @@ export class MatchesService {
             throw e;
         }
     }
-    public async deleteMatch(match: any): Promise<void>{
+    public async deleteMatch(match: MatchInterface): Promise<void>{
         try{
             await this.matchesModel.deleteOne({
                 awayTeam: match.awayTeam,

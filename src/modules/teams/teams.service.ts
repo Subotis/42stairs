@@ -12,6 +12,7 @@ import { DbModelNames } from '../../enums/db.model.names';
 import { DatasetRecordInterface } from "../../interfaces/dataset.record.interface";
 import { TeamForMatchInterface } from "../../interfaces/team.for.match.interface";
 import { TeamCreatedInterface } from "../../interfaces/team.created.interface";
+import { TeamsQueryDto } from "./dtos/teams.query.dto";
 
 @Injectable()
 export class TeamsService {
@@ -23,21 +24,20 @@ export class TeamsService {
     }
     public async updateTeams(dataset: DatasetRecordInterface[]): Promise<void> {
         try {
-            const existingTeams: TeamInterface[] = await this.teamsModel.find().exec();
+            const existingTeams = await this.teamsModel.find().exec();
+            const existingTeamNames: string[] = existingTeams.map(record => record.name);
             const teams: string[] = [];
             dataset.forEach(record => {
-                teams.push(...[record.AwayTeam, record.HomeTeam]);
+                teams.push(record.AwayTeam, record.HomeTeam);
             })
             const uniqTeams: string[] = Array.from(new Set(teams));
-            const teamsToInsert: TeamInterface[] = uniqTeams.filter((item: string) => !existingTeams
-                .map(record => record.name)
-                .includes(item))
-                .map((team:string) => ({
-                        name: team,
-                        updated: new Date(),
-                    })
-                );
-            await this.teamsModel.insertMany(teamsToInsert);
+            const teamNamesToInsert: string[] = uniqTeams.filter((item: string) => !existingTeamNames.includes(item));
+            await this.teamsModel.insertMany(teamNamesToInsert.map((team:string) => (
+                {
+                    name: team,
+                    updated: new Date(),
+                }
+                )));
 
         } catch (e) {
             this.logger.error('Unable to insert teams', e);
@@ -47,6 +47,7 @@ export class TeamsService {
 
     public async getAllTeams(): Promise<TeamForMatchInterface[]> {
         try {
+
             return await this.teamsModel.find().exec();
         } catch (e){
             this.logger.error('Unable to get teams', e);
@@ -54,15 +55,17 @@ export class TeamsService {
         }
     }
 
-    public async findTeamsAPI(query?: any): Promise<TeamForMatchInterface[]> {
+    public async findTeamsAPI(query?: TeamsQueryDto): Promise<TeamForMatchInterface[]> {
         try{
             if (query && query.filter) {
+
                 return  await this.teamsModel.find(
                     {
                         name: new RegExp(query.filter, 'i')
                     },
                 )
             } else {
+
                 return  await this.teamsModel.find().exec()
             }
         } catch (e) {
@@ -73,6 +76,7 @@ export class TeamsService {
 
     public async findTeamByName(name: string): Promise<TeamForMatchInterface | null> {
         try {
+
             return await this.teamsModel.findOne({ name:name });
         } catch (e) {
             this.logger.error('Unable to find team', e);
@@ -88,6 +92,7 @@ export class TeamsService {
                     `Team ${team.name} already exist`
                 );
             }
+
             return await this.teamsModel.create(
                 {
                     name: team.name,
@@ -104,6 +109,7 @@ export class TeamsService {
             const existingNewTeam: TeamForMatchInterface = await this.findTeamByName(team.newName);
             const existingOldTeam: TeamForMatchInterface = await this.findTeamByName(team.oldName);
             if (!existingNewTeam && existingOldTeam) {
+
                 return await this.teamsModel.findOneAndUpdate(
                     {
                         name: team.oldName

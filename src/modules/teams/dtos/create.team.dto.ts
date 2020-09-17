@@ -1,4 +1,4 @@
-import {MinLength, MaxLength, IsNotEmpty} from 'class-validator';
+import { MinLength, MaxLength, IsNotEmpty } from 'class-validator';
 
 export class CreateTeamDto {
     @IsNotEmpty()

@@ -5,6 +5,6 @@ export interface MatchInterface extends Document {
     date: Date,
     homeTeam: string,
     awayTeam: string,
-    HTS: number,
-    ATS: number,
+    HTS?: number,
+    ATS?: number,
 }

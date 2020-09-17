@@ -1,4 +1,4 @@
-import {MinLength, MaxLength, IsNotEmpty} from 'class-validator';
+import { MinLength, MaxLength, IsNotEmpty } from 'class-validator';
 
 export class UpdateTeamDto {
     @IsNotEmpty()
@@ -9,6 +9,7 @@ export class UpdateTeamDto {
         message: 'Name is too long',
     })
     oldName: string;
+
     @IsNotEmpty()
     @MinLength(2, {
         message: 'Name is too short',

@@ -1,7 +1,12 @@
 import {
     Body,
-    Controller, Delete,
-    Get, HttpCode, HttpStatus, Patch, Post,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Patch,
+    Post,
     Query,
     UseInterceptors
 } from '@nestjs/common';
@@ -19,14 +24,17 @@ import { MatchResultsQueryDto } from "./dtos/match.results.query.dto";
 @Controller('matches')
 @UseInterceptors(MainAppInterceptor)
 export class MatchesController {
-    constructor(private readonly proxyService: ProxyService) {}
+    constructor(
+        private readonly proxyService: ProxyService
+    ) {}
 
     @Get('/results')
     @UseInterceptors(MatchesTransformInterceptor)
     public async getResults(
         @Query() query: MatchResultsQueryDto,
     ): Promise<MatchDbInterface[]> {
-        return await this.proxyService.getMatchResultsAPI(query);
+
+        return this.proxyService.getMatchResultsAPI(query);
     }
 
     @Post('/create')
@@ -35,7 +43,8 @@ export class MatchesController {
     public async createMatch(
         @Body() body: CreateMatchDto,
     ): Promise<MatchDbInterface> {
-        return await this.proxyService.createMatch(body);
+
+        return this.proxyService.createMatch(body);
     }
 
     @Patch('/update')
@@ -44,7 +53,8 @@ export class MatchesController {
     public async updateMatch(
         @Body() body: UpdateMatchDto,
     ): Promise<MatchInterface> {
-        return await this.proxyService.updateMatch(body);
+
+        return this.proxyService.updateMatch(body);
     }
 
     @Delete('/delete')
@@ -52,7 +62,8 @@ export class MatchesController {
     public async deleteTeam(
         @Body() body: DeleteMatchDto,
     ): Promise<void> {
-        return await this.proxyService.deleteMatch(body);
+
+        return this.proxyService.deleteMatch(body);
     }
 
 }

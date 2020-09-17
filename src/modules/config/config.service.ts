@@ -3,9 +3,7 @@ import * as Joi from '@hapi/joi';
 import { readdirSync } from 'fs';
 import * as path from 'path';
 import { get } from 'lodash';
-
 import { RuntimeException } from '@nestjs/core/errors/exceptions/runtime.exception';
-
 import { Environments } from '../../enums/environments';
 
 
