@@ -1,4 +1,5 @@
 import { MinLength, MaxLength, IsNotEmpty, Matches, IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class MatchResultsQueryDto {
     @IsOptional()
@@ -9,17 +10,29 @@ export class MatchResultsQueryDto {
     @MaxLength(20, {
         message: 'homeTeam name is too long',
     })
-    teamOne: string;
+    @ApiPropertyOptional({
+        description: 'Team one name',
+        type: 'string',
+        maxLength: 20,
+        minLength: 2,
+    })
+    teamOne?: string;
 
     @IsOptional()
     @IsNotEmpty()
     @MinLength(2, {
-        message: 'awayTeam name is too short',
+        message: 'teamOne name is too short',
     })
     @MaxLength(20, {
-        message: 'awayTeam name is too long',
+        message: 'teamTwoTeam name is too long',
     })
-    teamTwo: string;
+    @ApiPropertyOptional({
+            description: 'Team two name',
+            type: 'string',
+            maxLength: 20,
+            minLength: 2,
+    })
+    teamTwo?: string;
 
     @IsOptional()
     @IsNotEmpty()
@@ -28,5 +41,10 @@ export class MatchResultsQueryDto {
     @Matches(/^[0-2][0-9]-[0-1][0-2]-[0-9]{4}$/gm,{
         message: "date should be in 'DD-MM-YYYY' format",
     })
-    date: string;
+    @ApiPropertyOptional({
+            description: 'Date of match',
+            type: 'string',
+            pattern: '/^[0-2][0-9]-[0-1][0-2]-[0-9]{4}$/gm'
+    })
+    date?: string;
 }

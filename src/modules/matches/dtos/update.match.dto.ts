@@ -1,4 +1,5 @@
-import {MinLength, MaxLength, IsNotEmpty, IsISO8601, IsInt, Matches, IsOptional} from 'class-validator';
+import { MinLength, MaxLength, IsNotEmpty, IsInt, Matches, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class UpdateMatchDto {
     @IsNotEmpty()
@@ -7,6 +8,12 @@ export class UpdateMatchDto {
     })
     @MaxLength(20, {
         message: 'homeTeam name is too long',
+    })
+    @ApiProperty({
+        description: 'Home team name',
+        type: 'string',
+        maxLength: 20,
+        minLength: 2,
     })
     homeTeam: string;
 
@@ -17,6 +24,12 @@ export class UpdateMatchDto {
         message: 'awayTeam name is too long',
     })
     @IsNotEmpty()
+    @ApiProperty({
+        description: 'Away team name',
+        type: 'string',
+        maxLength: 20,
+        minLength: 2,
+    })
     awayTeam: string;
 
     @IsOptional()
@@ -26,13 +39,28 @@ export class UpdateMatchDto {
     @Matches(/^[0-2][0-9]-[0-1][0-2]-[0-9]{4}$/gm,{
         message: "date should be in 'DD-MM-YYYY' format",
     })
-    date: string;
+    @ApiPropertyOptional({
+        description: 'Date of match',
+        type: 'string',
+        pattern: '/^[0-2][0-9]-[0-1][0-2]-[0-9]{4}$/gm'
+    })
+    date?: string;
 
     @IsOptional()
     @IsInt()
-    HTS: number;
+    @ApiPropertyOptional({
+        description: 'Home team score',
+        type: 'number',
+        minimum: 0
+    })
+    HTS?: number;
 
     @IsOptional()
     @IsInt()
-    ATS: number;
+    @ApiPropertyOptional({
+        description: 'Away team score',
+        type: 'number',
+        minimum: 0
+    })
+    ATS?: number;
 }

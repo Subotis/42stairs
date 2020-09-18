@@ -17,7 +17,7 @@ export class RootService {
   ) {
   }
   getRootPage(): string {
-    return 'Hello World!';
+    return 'Hello 42stairs!';
   }
 
   public async updateDataset(): Promise<void> {

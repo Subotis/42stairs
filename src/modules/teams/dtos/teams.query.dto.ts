@@ -1,4 +1,5 @@
 import { MaxLength, IsNotEmpty, IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class TeamsQueryDto {
     @IsOptional()
@@ -6,5 +7,13 @@ export class TeamsQueryDto {
     @MaxLength(20, {
         message: 'Filter is too long',
     })
-    filter: string;
+    @ApiPropertyOptional(
+        {
+            description: 'Query value',
+            type: 'string',
+            maxLength: 20,
+            minLength: 0,
+        }
+    )
+    filter?: string;
 }
